@@ -5,7 +5,12 @@
   "author": "Chanon Roy <chanonroy@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "next --port 3500"
+    "dev": "next --port 3500",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "transform": {
+    "^.+\\.[t|j]sx?$": "babel-jest"
   },
   "dependencies": {
     "next": "^9.1.0",
@@ -13,6 +18,11 @@
     "react-dom": "^16.10.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/preset-react": "^7.0.0",
+    "@testing-library/react": "^9.3.0",
+    "babel-jest": "^24.9.0",
     "jest": "^24.9.0"
   }
 }

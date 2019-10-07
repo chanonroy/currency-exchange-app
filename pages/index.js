@@ -1,5 +1,7 @@
+import Item from '../components/Item';
+
 const Hello = () => {
-  return <div> Hello Next </div>
+  return <Item />
 }
 
 export default Hello;
