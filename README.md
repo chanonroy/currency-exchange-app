@@ -21,7 +21,7 @@ Spin up the local development server
 
 ## :syringe: Testing
 
-Run testing  suite
+Run testing suite
 ```sh
 > yarn test
 ```
@@ -29,4 +29,9 @@ Run testing  suite
 Run testing suite with watcher
 ```sh
 > yarn test:watch
+```
+
+Run linting
+```sh
+> yarn lint
 ```

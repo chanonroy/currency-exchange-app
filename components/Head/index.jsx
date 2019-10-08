@@ -1,6 +1,10 @@
-import NextHead from "next/head";
 import React from "react";
+import PropTypes from "prop-types";
+import NextHead from "next/head";
 
+/**
+ * Component that populates the HTML head section
+ */
 const Head = ({ title }) => {
   return (
     <NextHead>
@@ -22,6 +26,10 @@ const Head = ({ title }) => {
       />
     </NextHead>
   );
+};
+
+Head.propTypes = {
+  title: PropTypes.string.isRequired
 };
 
 export default Head;
