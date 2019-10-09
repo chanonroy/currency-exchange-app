@@ -4,6 +4,7 @@ import NextHead from "next/head";
 
 /**
  * Component that populates the HTML head section
+ * https://nextjs.org/docs#populating-head
  */
 const Head = ({ title }) => {
   return (
@@ -22,7 +23,7 @@ const Head = ({ title }) => {
       <link
         rel="shortcut icon"
         type="image/x-icon"
-        href="/static/favicon.png"
+        href="/static/favicon.ico"
       />
     </NextHead>
   );
