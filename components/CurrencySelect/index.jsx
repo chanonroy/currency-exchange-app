@@ -9,8 +9,8 @@ const Container = styled.div`
 `
 
 const Label = styled.div`
-  margin-left: 16px;
-  color: #454f5b;
+  margin-left: 12px;
+  color: #637381;
   font-weight: bold;
   font-size: 0.7;
 `;
@@ -26,7 +26,7 @@ const CurrencySelector = () => {
         <Flag src="/static/us-flag.svg" />
         <Label> USD - United States Dollars </Label> 
       </Container>
-      <ChevronDownIcon />
+      <ChevronDownIcon color="lightgrey" />
     </Container>
   )
 }
