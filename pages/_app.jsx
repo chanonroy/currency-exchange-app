@@ -8,6 +8,7 @@ import theme from "../lib/theme";
 const GlobalStyle = createGlobalStyle`
   body {
     background-color: whitesmoke;
+    color: #212b36;
     margin: 0;
     font-family: Roboto, -apple-system, "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
   }

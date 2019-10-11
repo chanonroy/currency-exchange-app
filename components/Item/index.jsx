@@ -15,6 +15,7 @@ const Item = () => {
   return (
     <Card data-testid="item">
       <div>Card</div>
+      <input />
     </Card>
   )
 }
