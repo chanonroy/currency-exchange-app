@@ -15,7 +15,7 @@ const Container = styled.div`
 `;
 
 const Card = styled.div`
-  width: 400px;
+  width: 375px;
   height: 500px;
   padding: 20px;
   border-radius: ${props => props.theme.sizes.borderRadius};
@@ -73,6 +73,7 @@ const CurrencyConverter = () => {
       <Container>
         <Card data-testid="item">
           <CurrencySelect />
+
           {/* <div>Card</div>
           <div>
             To:
