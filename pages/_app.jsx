@@ -12,6 +12,9 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     font-family: Roboto, -apple-system, "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
   }
+  *:focus {
+    outline: none;
+  }
 `;
 
 export default class MyApp extends App {

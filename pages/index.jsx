@@ -16,16 +16,39 @@ const Container = styled.div`
 
 const Card = styled.div`
   width: 375px;
-  height: 500px;
   padding: 20px;
   border-radius: ${props => props.theme.sizes.borderRadius};
   box-shadow: ${props => props.theme.shadows.z3};
   background-color: white;
 `;
 
+const CurrencyNote = styled.div`
+  color: ${props => props.theme.colors.gray5};
+  margin: 10px 0;
+
+`
+
+const CurrencyInput = styled.input`
+  color: ${props => props.theme.colors.gray6};
+  font-weight: 300;
+  border: none;
+  font-size: 3em;
+  width: 100%;
+  ::placeholder {
+    color: ${props => props.theme.colors.gray6};
+  }
+`
+
+const Divider = styled.hr`
+  border-width: 0.5px;
+  border-color: ${props => props.theme.colors.gray3};
+`
+
 const CurrencyConverter = () => {
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
+  const [fromCurrency, setFromCurrency] = useState('USD');
+  const [toCurrency, setToCurrency] = useState('GBP');
 
   // GBP to CAD
   const toRate = 1.6
@@ -63,32 +86,38 @@ const CurrencyConverter = () => {
     setToAmount(amount);
   }
 
-  // TODO: change country
-  // TODO: reset bucket
-  // TODO: swap buckets
-
   return (
     <>
       <Head title="Currency Exchange App" />
       <Container>
         <Card data-testid="item">
-          <CurrencySelect />
 
-          {/* <div>Card</div>
-          <div>
-            To:
-            <input
+          <div style={{ marginBottom: '25px' }}>
+            <CurrencySelect
+              currencyCode={fromCurrency}
+              onSelect={setFromCurrency}
+              />
+            <CurrencyNote> 1 USD = 1.61 CAD </CurrencyNote> 
+            <CurrencyInput
+              placeholder="0"
               value={fromAmount}
-              onChange={e => updateFromAmount(e.target.value, fromRate)}
-            />
+              onChange={e => updateFromAmount(e.target.value, fromRate)} />
           </div>
-          <div>
-            From:
-            <input
+
+          <Divider />
+
+          <div style={{ marginTop: '25px' }}>
+            <CurrencySelect
+              currencyCode={toCurrency}
+              onSelect={setToCurrency}
+              />
+            <CurrencyNote> 1 USD = 1.61 CAD </CurrencyNote> 
+            <CurrencyInput
+              placeholder="0"
               value={toAmount}
-              onChange={e => updateToAmount(e.target.value, toRate)}
-            />
-          </div> */}
+              onChange={e => updateToAmount(e.target.value, toRate)} />
+          </div>
+
         </Card>
       </Container>
     </>
