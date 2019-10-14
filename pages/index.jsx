@@ -1,7 +1,11 @@
-import React, { useState } from "react";
-import Item from "../components/Item";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+
 import Head from "../components/Head";
-import styled from 'styled-components';
+import ExchangeWidget from "../components/ExchangeWidget";
+import CurrencySelect from "../components/CurrencySelect";
+
+import convertCurrency from "../utils/conversion";
 
 const Container = styled.div`
   display: flex;
@@ -11,22 +15,15 @@ const Container = styled.div`
   height: 100vh;
 `;
 
-const CurrencyConverter = () => {
-  // const [fromAmount, setFromAmount] = useState(0);
-  // const [toAmount, setToAmount] = useState(0);
-  
-  // const currency = 'USD';
-  // const currencySymbol = '$';
-
-  // const exchangeRate = 0.02;
+const Home = () => {
   return (
     <>
       <Head title="Currency Exchange App" />
       <Container>
-        <Item />
+        <ExchangeWidget />
       </Container>
     </>
   );
 };
 
-export default CurrencyConverter;
+export default Home;
