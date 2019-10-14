@@ -1,10 +1,39 @@
-// import React from 'react';
-// import Item from './index';
-// import { render } from '@testing-library/react'
+import React from 'react';
+import { fireEvent } from '@testing-library/react';
 
-describe('Item Component', () => {
-  it('has a fake test', () => {
-    // const { getByTestId } = render(<Item />)
-    expect(1).toBe(1);
+import CurrencySelector from './index';
+import renderWithTheme from '../../utils/renderWithTheme';
+
+describe('Currency Select component', () => {
+  it('can render properly', () => {
+    const component = renderWithTheme(
+      <CurrencySelector
+        currencyCode={'GBP'}
+        onSelect={val => val}/>
+    );
+    expect(component).toBeDefined();
+  });
+  it('should not show the dropdown on load', () => {
+    const { getByTestId } = renderWithTheme(
+      <CurrencySelector
+        currencyCode={'GBP'}
+        onSelect={val => val}/>
+    );
+    const dropdown = getByTestId('currency-dropdown');
+    expect(dropdown).not.toBeVisible()
+  });
+  it('should show dropdown on click', async () => {
+    const { getByTestId } = renderWithTheme(
+      <CurrencySelector
+        currencyCode={'GBP'}
+        onSelect={val => val}/>
+    );
+    const dropdownButton = getByTestId('currency-dropdown-btn');
+    await fireEvent.click(dropdownButton);
+
+    const dropdown = getByTestId('currency-dropdown');
+
+    // TODO: add better assertion to this test
+    expect(dropdown).toBeDefined();
   });
 });

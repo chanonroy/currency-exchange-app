@@ -4,7 +4,7 @@ import styled from "styled-components";
 import ApiClient from '../../lib/api';
 import CurrencySelect from "../CurrencySelect";
 import formatDecimal from "../../utils/format-decimal";
-import { convertCurrency, calculateMirrorRate } from "../../utils/conversion";
+import { convertCurrency } from "../../utils/conversion";
 
 const Card = styled.div`
   width: 375px;
@@ -37,9 +37,6 @@ const Divider = styled.hr`
 const apiClient = new ApiClient();
 
 const ExchangeWidget = () => {
-  // Interval Id
-  const [intervalId, setIntervalId] = useState('');
-
   // Amounts
   const [baseAmount, setBaseAmount] = useState('');
   const [convertedAmount, setConvertedAmount] = useState('');
@@ -72,7 +69,7 @@ const ExchangeWidget = () => {
 
       // update rates (using refs)
       const newBaseToConvertedRate = data[baseCurrency][convertedCurrency].toFixed(2);
-      const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
+      const newConvertedToBaseRate = data[convertedCurrency][baseCurrency].toFixed(2);
       setBaseToConvertedRate(newBaseToConvertedRate);
       setConvertedToBaseRate(newConvertedToBaseRate);
 
@@ -110,7 +107,7 @@ const ExchangeWidget = () => {
 
     // 2) update rates
     const newBaseToConvertedRate = rates[newCurrencyCode][convertedCurrency].toFixed(2);
-    const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
+    const newConvertedToBaseRate = rates[convertedCurrency][newCurrencyCode].toFixed(2);
     setBaseToConvertedRate(newBaseToConvertedRate);
     setConvertedToBaseRate(newConvertedToBaseRate);
 
@@ -132,7 +129,8 @@ const ExchangeWidget = () => {
 
     // 2) update rates
     const newBaseToConvertedRate = rates[baseCurrency][newCurrencyCode].toFixed(2);
-    const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
+    const newConvertedToBaseRate = rates[newCurrencyCode][baseCurrency].toFixed(2);
+
     setBaseToConvertedRate(newBaseToConvertedRate);
     setConvertedToBaseRate(newConvertedToBaseRate);
 
