@@ -66,16 +66,16 @@ const ExchangeWidget = () => {
   }, []);
 
   const updateBaseCurrency = (newCurrencyCode) => {
-    // update currency
+    // 1) update currency
     setBaseCurrency(newCurrencyCode);
 
-    // update rates
+    // 2) update rates
     const newBaseToConvertedRate = staticRates[newCurrencyCode][convertedCurrency];
     const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
     setBaseToConvertedRate(newBaseToConvertedRate);
     setConvertedToBaseRate(newConvertedToBaseRate);
 
-    // update amounts (if needed)
+    // 3) update amounts (if needed)
     if (baseAmount) {
       if (newCurrencyCode === convertedCurrency) {
         setBaseAmount(baseAmount);
@@ -88,16 +88,16 @@ const ExchangeWidget = () => {
   }
   
   const updateConvertedCurrency = (newCurrencyCode) => {
-    // update currency
+    // 1) update currency
     setConvertedCurrency(newCurrencyCode);
 
-    // update rates
+    // 2) update rates
     const newBaseToConvertedRate = staticRates[baseCurrency][newCurrencyCode];
     const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
     setBaseToConvertedRate(newBaseToConvertedRate);
     setConvertedToBaseRate(newConvertedToBaseRate);
 
-    // update amounts (if needed)
+    // 3) update amounts (if needed)
     if (baseAmount) {
       if (newCurrencyCode === baseCurrency) {
         setBaseAmount(convertedAmount);
@@ -108,37 +108,36 @@ const ExchangeWidget = () => {
       }
     }
   }
-   
 
   const updateBaseAmount = (value, rate) => {
-    // Check if valid number
+    // 1) Check if valid number
     if (!value || isNaN(value)) {
       setConvertedAmount('0');
       setBaseAmount(value);
       return;
     }
 
-    // Ensure 2 decimal points
+    // 2) Ensure 2 decimal points
     const amount = formatDecimal(value);
 
-    // Convert and update currencies
+    // 3) Convert and update currencies
     const result = convertCurrency(amount, rate);
     setConvertedAmount(result);
     setBaseAmount(amount);
   }
 
   const updateConvertedAmount = (value, rate) => {
-    // Check if valid number
+    // 1) Check if valid number
     if (!value || isNaN(value)) {
       setBaseAmount('0');
       setConvertedAmount(value);
       return;
     }
 
-    // Ensure 2 decimal points
+    // 2) Ensure 2 decimal points
     const amount = formatDecimal(value);
-  
-    // Convert and update currencies
+
+    // 3) Convert and update currencies
     const result = convertCurrency(amount, rate);
     setBaseAmount(result);
     setConvertedAmount(amount);
