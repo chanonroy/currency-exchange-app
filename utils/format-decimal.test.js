@@ -11,14 +11,14 @@ describe('Format Decimal function', () => {
   });
   it('will skip formatting if whole number', () => {
     const result = formatDecimal('1');
-    expect(result).toBe(1);
+    expect(result).toBe('1');
   });
-  it('will skip formatting if has a period', () => {
+  it('can handle a decimal with one period', () => {
     const result = formatDecimal('1.');
-    expect(result).toBe(1);
+    expect(result).toBe('1.');
   });
   it('is able to handle undefined input', () => {
     const result = formatDecimal('');
-    expect(result).toBe(0);
+    expect(result).toBe('');
   });
 });
