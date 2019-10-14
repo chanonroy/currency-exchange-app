@@ -1,5 +1,4 @@
-// Rates for testing and a fallback for the API failing
-const staticRates = {
+const rates = {
   'USD': {
     'GBP': 0.7925201485,
     'EUR': 0.9055510278,
@@ -15,6 +14,8 @@ const staticRates = {
     'EUR': 1,
     'USD': 1.1043
   }
-}
+};
 
-export default staticRates;
+export default function handle(req, res) {
+  res.end(JSON.stringify(rates))
+}

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
+import ApiClient from '../../lib/api';
 import CurrencySelect from "../CurrencySelect";
 import formatDecimal from "../../utils/format-decimal";
 import { convertCurrency, calculateMirrorRate } from "../../utils/conversion";
-import staticRates from "../../constants/rates";
 
 const Card = styled.div`
   width: 375px;
@@ -35,9 +35,9 @@ const Divider = styled.hr`
   border-color: ${props => props.theme.colors.gray3};
 `
 
+const apiClient = new ApiClient();
+
 const ExchangeWidget = () => {
-  // Settings
-  const [useLiveRates, setUseLiveRates] = useState(false);
   // Amounts
   const [baseAmount, setBaseAmount] = useState('');
   const [convertedAmount, setConvertedAmount] = useState('');
@@ -45,22 +45,43 @@ const ExchangeWidget = () => {
   const [baseCurrency, setBaseCurrency] = useState('USD');
   const [convertedCurrency, setConvertedCurrency] = useState('GBP');
   // Rates
+  const [rates, setRates] = useState({});
   const [baseToConvertedRate, setBaseToConvertedRate] = useState('');
   const [convertedToBaseRate, setConvertedToBaseRate] = useState('');
 
+  const fetchAndUpdateRates = async () => {
+    try {
+      const { data } = await apiClient.fetchRates();
+      setRates(data);
+      // update rates
+      console.log('baseCurrency', baseCurrency);
+      console.log('convertedCurrency', convertedCurrency);
+      const newBaseToConvertedRate = data[baseCurrency][convertedCurrency];
+      const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
+      setBaseToConvertedRate(newBaseToConvertedRate);
+      setConvertedToBaseRate(newConvertedToBaseRate);
+      // update amounts (if needed)
+      if (baseAmount) {
+        if (baseCurrency === convertedCurrency) {
+          setBaseAmount(baseAmount);
+          setConvertedAmount(baseAmount);
+        } else {
+          updateBaseAmount(baseAmount, newBaseToConvertedRate);
+          updateConvertedAmount(convertedAmount, newConvertedToBaseRate);
+        }
+      }
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
   // Fetch rates from API every 10 seconds
   useEffect(() => {
-    // TODO: FETCH RATES FROM API (placeholder)
-    setBaseToConvertedRate('0.79');
-    setConvertedToBaseRate(calculateMirrorRate('0.79'));
-
+    console.log('Request to fetch rates (initial)');
+    fetchAndUpdateRates();
     const interval = setInterval(() => {
-      // api endpoint to get base currency
-      console.log('Fetch API interval');
-
-      // TODO: SET Rates
-      // TODO: SET Amounts
-
+      console.log('Request to fetch rates (10 sec)');
+      fetchAndUpdateRates();
     }, 10000);
     return () => clearInterval(interval);
   }, []);
@@ -70,7 +91,7 @@ const ExchangeWidget = () => {
     setBaseCurrency(newCurrencyCode);
 
     // 2) update rates
-    const newBaseToConvertedRate = staticRates[newCurrencyCode][convertedCurrency];
+    const newBaseToConvertedRate = rates[newCurrencyCode][convertedCurrency];
     const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
     setBaseToConvertedRate(newBaseToConvertedRate);
     setConvertedToBaseRate(newConvertedToBaseRate);
@@ -92,7 +113,7 @@ const ExchangeWidget = () => {
     setConvertedCurrency(newCurrencyCode);
 
     // 2) update rates
-    const newBaseToConvertedRate = staticRates[baseCurrency][newCurrencyCode];
+    const newBaseToConvertedRate = rates[baseCurrency][newCurrencyCode];
     const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
     setBaseToConvertedRate(newBaseToConvertedRate);
     setConvertedToBaseRate(newConvertedToBaseRate);
@@ -159,6 +180,7 @@ const ExchangeWidget = () => {
         <CurrencyInput
           placeholder="0"
           value={baseAmount}
+          label="base-currency-amount"
           onChange={e => updateBaseAmount(e.target.value, baseToConvertedRate)} />
       </div>
 
@@ -175,6 +197,7 @@ const ExchangeWidget = () => {
         <CurrencyInput
           placeholder="0"
           value={convertedAmount}
+          label="converted-currency-amount"
           onChange={e => updateConvertedAmount(e.target.value, convertedToBaseRate)} />
       </div>
     </Card>
