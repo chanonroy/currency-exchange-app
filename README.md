@@ -62,7 +62,7 @@ In addition, pull request feature branches will also be available on a staging e
 
 - Break down the `<ExchangeWidget />` component into more manageable and testable components.
 
-- Leverage the [useReducer](https://reactjs.org/docs/hooks-reference.html#usereducer) to create more functional state mutation. Bring in actions and dispatchers.
+- Leverage the [useReducer](https://reactjs.org/docs/hooks-reference.html#usereducer) to create more functional state mutation. Bring in action dispatchers and reducers.
 
 - Write more extensive unit tests on all components and bring in a thin e2e testing suite using [Cypress](https://www.cypress.io/).
 
