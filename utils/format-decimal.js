@@ -4,7 +4,7 @@
  * @return {String || Number} formattedResult
  */
 const formatDecimal = (value) => {
-  return value % 1 !== 0 ? Math.floor(value * 100) / 100 : value;
+  return value % 1 !== 0 ? Math.round(value * 100) / 100 : value;
 }
 
 export default formatDecimal;

@@ -21,4 +21,8 @@ describe('Format Decimal function', () => {
     const result = formatDecimal('');
     expect(result).toBe('');
   });
+  it('can handle rounding edge case', () => {
+    const result = formatDecimal('2.3');
+    expect(result).toBe(2.3);
+  });
 });
