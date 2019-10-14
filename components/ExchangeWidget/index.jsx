@@ -34,7 +34,6 @@ const Divider = styled.hr`
   border-width: 0.5px;
   border-color: ${props => props.theme.colors.gray3};
 `
-
 const apiClient = new ApiClient();
 
 const ExchangeWidget = () => {
@@ -126,7 +125,7 @@ const ExchangeWidget = () => {
       }
     }
   }
-  
+
   const updateConvertedCurrency = async (newCurrencyCode) => {
     // 1) update currency
     await setConvertedCurrency(newCurrencyCode);
