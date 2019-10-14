@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 
+import ApiClient from '../../lib/api';
 import CurrencySelect from "../CurrencySelect";
 import formatDecimal from "../../utils/format-decimal";
 import { convertCurrency, calculateMirrorRate } from "../../utils/conversion";
-import staticRates from "../../constants/rates";
 
 const Card = styled.div`
   width: 375px;
@@ -34,43 +34,82 @@ const Divider = styled.hr`
   border-width: 0.5px;
   border-color: ${props => props.theme.colors.gray3};
 `
+const apiClient = new ApiClient();
 
 const ExchangeWidget = () => {
-  // Settings
-  const [useLiveRates, setUseLiveRates] = useState(false);
+  // Interval Id
+  const [intervalId, setIntervalId] = useState('');
+
   // Amounts
   const [baseAmount, setBaseAmount] = useState('');
   const [convertedAmount, setConvertedAmount] = useState('');
+
   // Currency Code
   const [baseCurrency, setBaseCurrency] = useState('USD');
   const [convertedCurrency, setConvertedCurrency] = useState('GBP');
+  
+  // Currency Code Refs (to allow access closure during setIntervals)
+  const baseCurrencyRef = useRef(baseCurrency);
+  baseCurrencyRef.current = baseCurrency;
+  const convertedCurrencyRef = useRef(convertedCurrency);
+  convertedCurrencyRef.current = convertedCurrency;
+
   // Rates
+  const [rates, setRates] = useState({});
   const [baseToConvertedRate, setBaseToConvertedRate] = useState('');
   const [convertedToBaseRate, setConvertedToBaseRate] = useState('');
 
-  // Fetch rates from API every 10 seconds
+  const fetchAndUpdateRates = async () => {
+    try {
+      const { data } = await apiClient.fetchRates();
+      
+      // set new rates
+      setRates(data);
+  
+      // access currency using refs (for when this method is called in setInterval)
+      const baseCurrency = baseCurrencyRef.current;
+      const convertedCurrency = convertedCurrencyRef.current;
+
+      // update rates (using refs)
+      const newBaseToConvertedRate = data[baseCurrency][convertedCurrency].toFixed(2);
+      const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
+      setBaseToConvertedRate(newBaseToConvertedRate);
+      setConvertedToBaseRate(newConvertedToBaseRate);
+
+      // update amounts (if needed)
+      if (baseAmount) {
+        if (baseCurrency === convertedCurrency) {
+          setBaseAmount(baseAmount);
+          setConvertedAmount(baseAmount);
+        } else {
+          updateBaseAmount(baseAmount, newBaseToConvertedRate);
+          updateConvertedAmount(convertedAmount, newConvertedToBaseRate);
+        }
+      }
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
   useEffect(() => {
-    // TODO: FETCH RATES FROM API (placeholder)
-    setBaseToConvertedRate('0.79');
-    setConvertedToBaseRate(calculateMirrorRate('0.79'));
+    // Make an initial request to fetch rates
+    console.log('Request to fetch rates (initial)');
+    fetchAndUpdateRates();
 
+    // Use setInterval to query new rates every 10 seconds
     const interval = setInterval(() => {
-      // api endpoint to get base currency
-      console.log('Fetch API interval');
-
-      // TODO: SET Rates
-      // TODO: SET Amounts
-
+      console.log('Request to fetch rates (every 10 secs)');
+      fetchAndUpdateRates()
     }, 10000);
     return () => clearInterval(interval);
   }, []);
 
-  const updateBaseCurrency = (newCurrencyCode) => {
+  const updateBaseCurrency = async (newCurrencyCode) => {
     // 1) update currency
-    setBaseCurrency(newCurrencyCode);
+    await setBaseCurrency(newCurrencyCode);
 
     // 2) update rates
-    const newBaseToConvertedRate = staticRates[newCurrencyCode][convertedCurrency];
+    const newBaseToConvertedRate = rates[newCurrencyCode][convertedCurrency].toFixed(2);
     const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
     setBaseToConvertedRate(newBaseToConvertedRate);
     setConvertedToBaseRate(newConvertedToBaseRate);
@@ -86,13 +125,13 @@ const ExchangeWidget = () => {
       }
     }
   }
-  
-  const updateConvertedCurrency = (newCurrencyCode) => {
+
+  const updateConvertedCurrency = async (newCurrencyCode) => {
     // 1) update currency
-    setConvertedCurrency(newCurrencyCode);
+    await setConvertedCurrency(newCurrencyCode);
 
     // 2) update rates
-    const newBaseToConvertedRate = staticRates[baseCurrency][newCurrencyCode];
+    const newBaseToConvertedRate = rates[baseCurrency][newCurrencyCode].toFixed(2);
     const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
     setBaseToConvertedRate(newBaseToConvertedRate);
     setConvertedToBaseRate(newConvertedToBaseRate);
@@ -159,6 +198,7 @@ const ExchangeWidget = () => {
         <CurrencyInput
           placeholder="0"
           value={baseAmount}
+          label="base-currency-amount"
           onChange={e => updateBaseAmount(e.target.value, baseToConvertedRate)} />
       </div>
 
@@ -175,6 +215,7 @@ const ExchangeWidget = () => {
         <CurrencyInput
           placeholder="0"
           value={convertedAmount}
+          label="converted-currency-amount"
           onChange={e => updateConvertedAmount(e.target.value, convertedToBaseRate)} />
       </div>
     </Card>

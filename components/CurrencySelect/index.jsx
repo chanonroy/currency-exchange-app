@@ -96,7 +96,9 @@ const CurrencySelector = ({ currencyCode, onSelect }) => {
         onClick={() => setDropdown(!dropdown)}
         data-testid="currency-dropdown-btn">
         <FlexContainer>
-          <Flag src={selectedCurrency.flagPath} />
+          <Flag
+            src={selectedCurrency.flagPath}
+            alt={`${selectedCurrency.code}-flag`} />
           <Label> {selectedCurrencylabel} </Label> 
         </FlexContainer>
         <ChevronDownIcon color="lightgrey" />
