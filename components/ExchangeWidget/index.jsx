@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import CurrencySelect from "../CurrencySelect";
+import formatDecimal from "../../utils/format-decimal";
 import { convertCurrency, calculateMirrorRate } from "../../utils/conversion";
+import staticRates from "../../constants/rates";
 
 const Card = styled.div`
   width: 375px;
@@ -34,33 +36,79 @@ const Divider = styled.hr`
 `
 
 const ExchangeWidget = () => {
+  // Settings
+  const [useLiveRates, setUseLiveRates] = useState(false);
+  // Amounts
   const [baseAmount, setBaseAmount] = useState('');
   const [convertedAmount, setConvertedAmount] = useState('');
+  // Currency Code
   const [baseCurrency, setBaseCurrency] = useState('USD');
   const [convertedCurrency, setConvertedCurrency] = useState('GBP');
-  const [baseToConvertedRate, setBaseToConvertedRate] = useState('1.2');
-  const [convertedToBaseRate, setConvertedToBaseRate] = useState('0.8');
-
-  // GBP to CAD
-  // const toRate = 0.79551
-  // const fromRate = calculateMirrorRate(toRate) // TODO: add currency here
+  // Rates
+  const [baseToConvertedRate, setBaseToConvertedRate] = useState('');
+  const [convertedToBaseRate, setConvertedToBaseRate] = useState('');
 
   // Fetch rates from API every 10 seconds
   useEffect(() => {
+    // TODO: FETCH RATES FROM API (placeholder)
+    setBaseToConvertedRate('0.79');
+    setConvertedToBaseRate(calculateMirrorRate('0.79'));
+
     const interval = setInterval(() => {
-      console.log('Fetch API');
       // api endpoint to get base currency
-      // set baseToConvertedRate
-      // set convertedToBaseRate
+      console.log('Fetch API interval');
+
+      // TODO: SET Rates
+      // TODO: SET Amounts
+
     }, 10000);
     return () => clearInterval(interval);
   }, []);
 
-  // TODO: DO WE ONLY NEED TO CHANGE ON base currency change??
-  // Fetch rates when currency changes
-  useEffect(() => {
-    console.log('fetchAPI on currency change');
-  }, [baseCurrency]);
+  const updateBaseCurrency = (newCurrencyCode) => {
+    // update currency
+    setBaseCurrency(newCurrencyCode);
+
+    // update rates
+    const newBaseToConvertedRate = staticRates[newCurrencyCode][convertedCurrency];
+    const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
+    setBaseToConvertedRate(newBaseToConvertedRate);
+    setConvertedToBaseRate(newConvertedToBaseRate);
+
+    // update amounts (if needed)
+    if (baseAmount) {
+      if (newCurrencyCode === convertedCurrency) {
+        setBaseAmount(baseAmount);
+        setConvertedAmount(baseAmount);
+      } else {
+        updateBaseAmount(baseAmount, newBaseToConvertedRate);
+        updateConvertedAmount(convertedAmount, newConvertedToBaseRate);
+      }
+    }
+  }
+  
+  const updateConvertedCurrency = (newCurrencyCode) => {
+    // update currency
+    setConvertedCurrency(newCurrencyCode);
+
+    // update rates
+    const newBaseToConvertedRate = staticRates[baseCurrency][newCurrencyCode];
+    const newConvertedToBaseRate = calculateMirrorRate(newBaseToConvertedRate);
+    setBaseToConvertedRate(newBaseToConvertedRate);
+    setConvertedToBaseRate(newConvertedToBaseRate);
+
+    // update amounts (if needed)
+    if (baseAmount) {
+      if (newCurrencyCode === baseCurrency) {
+        setBaseAmount(convertedAmount);
+        setConvertedAmount(convertedAmount);
+      } else {
+        updateBaseAmount(baseAmount, newBaseToConvertedRate);
+        updateConvertedAmount(convertedAmount, newConvertedToBaseRate);
+      }
+    }
+  }
+   
 
   const updateBaseAmount = (value, rate) => {
     // Check if valid number
@@ -69,11 +117,13 @@ const ExchangeWidget = () => {
       setBaseAmount(value);
       return;
     }
+
     // Ensure 2 decimal points
-    const amount = value % 1 !== 0 ? Math.floor(value * 100) / 100: value;
+    const amount = formatDecimal(value);
+
     // Convert and update currencies
-    const converted = convertCurrency(amount, rate);
-    setConvertedAmount(converted);
+    const result = convertCurrency(amount, rate);
+    setConvertedAmount(result);
     setBaseAmount(amount);
   }
 
@@ -84,23 +134,25 @@ const ExchangeWidget = () => {
       setConvertedAmount(value);
       return;
     }
+
     // Ensure 2 decimal points
-    const amount = value % 1 !== 0 ? Math.floor(value * 100) / 100: value;
+    const amount = formatDecimal(value);
+  
     // Convert and update currencies
-    const converted = convertCurrency(amount, rate);
-    setBaseAmount(converted);
+    const result = convertCurrency(amount, rate);
+    setBaseAmount(result);
     setConvertedAmount(amount);
   }
 
-  const baseToConvertedRateLabel = `1 ${baseCurrency} = ${convertedToBaseRate} ${convertedCurrency}`;
-  const convertedToBaseRateLabel = `1 ${convertedCurrency} = ${baseToConvertedRate} ${baseCurrency}`;
+  const baseToConvertedRateLabel = `1 ${baseCurrency} = ${baseToConvertedRate} ${convertedCurrency}`;
+  const convertedToBaseRateLabel = `1 ${convertedCurrency} = ${convertedToBaseRate} ${baseCurrency}`;
 
   return (
-    <Card data-testid="item">
+    <Card data-testid="exchange-widget">
       <div style={{ marginBottom: '25px' }}>
         <CurrencySelect
           currencyCode={baseCurrency}
-          onSelect={setBaseCurrency}
+          onSelect={updateBaseCurrency}
           />
         <CurrencyLabel>
           {baseToConvertedRateLabel}
@@ -116,7 +168,7 @@ const ExchangeWidget = () => {
       <div style={{ marginTop: '25px' }}>
         <CurrencySelect
           currencyCode={convertedCurrency}
-          onSelect={setConvertedCurrency}
+          onSelect={updateConvertedCurrency}
           />
         <CurrencyLabel>
           {convertedToBaseRateLabel}
