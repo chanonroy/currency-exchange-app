@@ -1,4 +1,4 @@
-import { convertCurrency, calculateMirrorRate } from './conversion.js';
+import { convertCurrency } from './conversion.js';
 
 describe('Conversion utility', () => {
   it('convertCurrency works with numbers', () => {

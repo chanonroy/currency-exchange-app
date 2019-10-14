@@ -17,4 +17,8 @@ describe('Format Decimal function', () => {
     const result = formatDecimal('1.');
     expect(result).toBe(1);
   });
+  it('is able to handle undefined input', () => {
+    const result = formatDecimal('');
+    expect(result).toBe(0);
+  });
 });
