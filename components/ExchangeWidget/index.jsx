@@ -7,8 +7,9 @@ import formatDecimal from "../../utils/format-decimal";
 import { convertCurrency } from "../../utils/conversion";
 
 const Card = styled.div`
-  width: 375px;
+  width: 350px;
   padding: 20px;
+  margin: 20px;
   border-radius: ${props => props.theme.sizes.borderRadius};
   box-shadow: ${props => props.theme.shadows.z3};
   background-color: white;
